@@ -8,12 +8,17 @@ class Main(object):
         self.vim = vim
 
     @neovim.function('ImprovizSend')
-    def doItPython(self, args):
+    def improvizSend(self, args):
         text = "\n".join(self.vim.current.buffer[:])
+        self.vim.out_write("Sending to Improviz\n")
         try:
-            resp = urllib2.urlopen("http://localhost:3000/read", text)
-            self.vim.command("echo '%s'" % resp.read())
+            url = "http://%s:%s/read" % (
+                self.vim.vars['improviz_host'],
+                self.vim.vars['improviz_port']
+            )
+            resp = urllib2.urlopen(url, text)
+            self.vim.out_write("%s\n" % resp.read())
         except urllib2.URLError, e:
-            self.vim.command("echo 'URL Error': %s" % str(e.reason))
+            self.vim.err_write("URL Error: %s\n" % str(e.reason))
         except urllib2.HTTPError, e:
-            self.vim.command("echo 'HTTP Error': %s" % str(e.code))
+            self.vim.err_write("HTTP Error: %s\n" % str(e.code))
