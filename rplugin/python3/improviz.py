@@ -1,5 +1,6 @@
 import neovim
-import urllib2
+from urllib.request import urlopen
+from urllib.error import URLError, HTTPError
 
 
 @neovim.plugin
@@ -9,18 +10,18 @@ class Main(object):
 
     @neovim.function('ImprovizSend')
     def improvizSend(self, args):
-        text = "\n".join(self.vim.current.buffer[:])
+        text = str.encode("\n".join(self.vim.current.buffer[:]))
         self.vim.out_write("Sending to Improviz\n")
         try:
             url = "http://%s:%s/read" % (
                 self.vim.vars['improviz_host'],
                 self.vim.vars['improviz_port']
             )
-            resp = urllib2.urlopen(url, text)
+            resp = urlopen(url, text)
             self.vim.out_write("%s\n" % resp.read())
-        except urllib2.URLError, e:
+        except URLError as e:
             self.vim.err_write("URL Error: %s\n" % str(e.reason))
-        except urllib2.HTTPError, e:
+        except HTTPError as e:
             self.vim.err_write("HTTP Error: %s\n" % str(e.code))
 
     @neovim.function('ImprovizToggleText')
@@ -31,9 +32,9 @@ class Main(object):
                 self.vim.vars['improviz_host'],
                 self.vim.vars['improviz_port']
             )
-            resp = urllib2.urlopen(url, data="")
+            resp = urlopen(url, data=str.encode(""))
             self.vim.out_write("%s\n" % resp.read())
-        except urllib2.URLError, e:
+        except URLError as e:
             self.vim.err_write("URL Error: %s - %s\n" % (str(e.reason), url))
-        except urllib2.HTTPError, e:
+        except HTTPError as e:
             self.vim.err_write("HTTP Error: %s\n" % str(e.code))
