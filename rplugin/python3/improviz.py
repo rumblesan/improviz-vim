@@ -84,3 +84,15 @@ class Main(object):
             self.vim.err_write("URL Error: %s - %s\n" % (str(e.reason), url))
         except HTTPError as e:
             self.vim.err_write("HTTP Error: %s\n" % str(e.code))
+
+    @neovim.command('ImprovizSend')
+    def improvizSendCommand(self):
+        self.improvizSend([])
+
+    @neovim.command('ImprovizNudgeBeat', nargs=1)
+    def improvizNudgeBeatCommand(self, args):
+        self.improvizNudgeBeat(args[0])
+
+    @neovim.command('ImprovizToggleText')
+    def improvizToggleTextCommand(self):
+        self.improvizToggleText([])
