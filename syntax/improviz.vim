@@ -2,7 +2,6 @@ if exists("b:current_syntax")
     finish
 endif
 
-set list
 set listchars=tab:\ ▸
 
 syntax keyword improvizKeyword times with
