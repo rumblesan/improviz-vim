@@ -1,4 +1,5 @@
 import neovim
+import json
 from urllib.request import urlopen
 from urllib.error import URLError, HTTPError
 
@@ -8,17 +9,42 @@ class Main(object):
     def __init__(self, vim):
         self.vim = vim
 
+    def makeErrLine(self, buf, err):
+        name = buf.name
+        line = err['line']
+        col = err['column']
+        msg = err['message'].strip()
+        errline = "\"%s:%d:%d: %s\"" % (name, line, col, msg)
+        self.vim.out_write(errline)
+        return errline
+
+    def addErrsToLocationList(self, errs):
+        cmd = "lexpr [%s]" % ", ".join(errs)
+        self.vim.out_write(cmd)
+        self.vim.command(cmd)
+
     @neovim.function('ImprovizSend')
     def improvizSend(self, args):
-        text = str.encode("\n".join(self.vim.current.buffer[:]))
+        buf = self.vim.current.buffer
+        code = buf[:]
+        text = str.encode("\n".join(code))
         self.vim.out_write("Sending to Improviz\n")
+        self.vim.command("lexpr []")  # clear the location list
         try:
             url = "http://%s:%s/read" % (
                 self.vim.vars['improviz_host'],
                 self.vim.vars['improviz_port']
             )
             resp = urlopen(url, text)
-            self.vim.out_write("%s\n" % resp.read())
+            data = json.loads(resp.read())
+            if data['status'] == 'ok':
+                self.vim.out_write("%d lines sent OK\n" % len(code))
+            else:
+                errs = []
+                for e in data['payload']:
+                    errs.append(self.makeErrLine(buf, e))
+                self.addErrsToLocationList(errs)
+                self.vim.err_write("%d errors found\n" % len(errs))
         except URLError as e:
             self.vim.err_write("URL Error: %s\n" % str(e.reason))
         except HTTPError as e:
