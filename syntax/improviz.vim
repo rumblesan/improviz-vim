@@ -6,7 +6,7 @@ set list
 set listchars=tab:\ ▸
 
 syntax keyword improvizKeyword times with
-syntax keyword improvizKeyword if else
+syntax keyword improvizKeyword if else elif
 
 syntax match improvizOperator "\v\*"
 syntax match improvizOperator "\v/"
