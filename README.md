@@ -6,11 +6,19 @@ A vim plugin to allow interaction with [Improviz](https://github.com/rumblesan/i
 
 ## Functionality
 
-Defines some functions you can map to commands or keybinds in your .vimrc:
+### Commands
 
-* ImprovizSend: Sends the content of the current buffer to a running improviz instance.
-* ImprovizToggleText: Turns the improviz text display on or off.
-* ImprovizNudgeBeat: Changes the improviz Nudge value by the value in an argument.
+* `:ImprovizSend`: Sends the content of the current buffer to a running improviz instance.
+* `:ImprovizToggleText`: Turns the improviz text display on or off.
+* `:ImprovizNudgeBeat amount`: Changes the improviz Nudge value by amount.
+
+### Functions
+
+All the commands are also available as functions.
+
+* `ImprovizSend()`: Sends the content of the current buffer to a running improviz instance.
+* `ImprovizToggleText()`: Turns the improviz text display on or off.
+* `ImprovizNudgeBeat(amount)`: Changes the improviz Nudge value by amount.
 
 ## Licence
 
